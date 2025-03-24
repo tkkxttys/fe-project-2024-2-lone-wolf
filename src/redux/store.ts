@@ -1,4 +1,4 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+/*import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import bookSlice from "./features/bookSlice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PURGE, REGISTER, PERSIST } from "redux-persist";
@@ -48,4 +48,55 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector*/
+
+// store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import { persistReducer, FLUSH, REHYDRATE, PAUSE, PURGE, REGISTER, PERSIST } from 'redux-persist';
+import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
+import { WebStorage } from 'redux-persist/lib/types';
+import rootReducer from './rootReducer';  // import rootReducer ที่คุณสร้างใหม่
+
+function createPersistStorage(): WebStorage {
+    const isServer = typeof window === 'undefined';
+    if (isServer) {
+        return {
+            getItem() {
+                return Promise.resolve(null);
+            },
+            setItem() {
+                return Promise.resolve();
+            },
+            removeItem() {
+                return Promise.resolve();
+            },
+        };
+    }
+
+    return createWebStorage('local');
+}
+
+const storage = createPersistStorage();
+
+const persistConfig = {
+    key: 'rootPersist',
+    storage,
+};
+
+const reduxPersistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+    reducer: {
+        reduxPersistedReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        }),
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+

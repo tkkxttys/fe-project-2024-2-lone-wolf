@@ -176,11 +176,12 @@ import { VenueJson, VenueItem } from '../../interface';
 import getVenues from '@/libs/getVenues';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFavorite, removeFavorite } from '@/redux/features/favoriteSlice';
-import { AppDispatch } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 
 export default function CardPanel() {   
+
     const dispatch = useDispatch<AppDispatch>();
-    const favorites = useSelector((state: any) => state.favorites.favorites);  // ดึงรายการโปรดจาก Redux
+    const favorites = useSelector((state: RootState) => state.favorites.favorites);  // ดึงรายการโปรดจาก Redux
 
     const [venueResponse, setVenueResponse] = useState<VenueJson | null>(null);
 
