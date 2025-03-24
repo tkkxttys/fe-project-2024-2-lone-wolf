@@ -76,6 +76,7 @@ export default async function TopMenu () {
                 <TopMenuItem title='My Favorites' pageRef='/myfavorite' /> // เพิ่มลิงก์นี้
             )}
 
+
             {/* หากเซสชันมีการล็อกอิน */}
             {session ? (
                 <div className='flex flex-row absolute left-0 h-full'>
