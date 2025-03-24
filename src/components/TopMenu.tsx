@@ -70,7 +70,7 @@ export default async function TopMenu () {
             <TopMenuItem title='Select Hotel' pageRef='/venue'/>
             <TopMenuItem title='Booking' pageRef='/booking'/> 
             <TopMenuItem title='Cart' pageRef='/cart'/>
-            
+
             {/* ลิงก์ไปหน้า My Favorites */}
             {session && (
                 <TopMenuItem title='My Favorites' pageRef='/myfavorite' /> // เพิ่มลิงก์นี้
