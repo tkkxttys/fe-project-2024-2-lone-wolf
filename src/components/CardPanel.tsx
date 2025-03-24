@@ -82,7 +82,7 @@ export default function CardPanel() {
     );
 } */
 
-'use client'
+/*'use client'
 import { useEffect, useReducer, useState } from 'react';
 import Card from '@/components/Card';
 import Link from 'next/link';
@@ -146,8 +146,8 @@ export default function CardPanel() {
                 ))}
             </div>
 
-            {/* Hotel List With Ratings */}
-            <div className="mt-8 p-4 bg-gray-100 rounded-lg shadow-md">
+            {/* Hotel List With Ratings */
+            /*<div className="mt-8 p-4 bg-gray-100 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold text-gray-800">
                     Hotel List With Ratings: {venueList.size}
                 </h2>
@@ -166,4 +166,85 @@ export default function CardPanel() {
             </div>
         </main>
     );
+}*/
+
+'use client'
+import { useEffect, useReducer, useState } from 'react';
+import Card from '@/components/Card';
+import Link from 'next/link';
+import { VenueJson, VenueItem } from '../../interface';
+import getVenues from '@/libs/getVenues';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavorite, removeFavorite } from '@/redux/features/favoriteSlice';
+import { AppDispatch } from '@/redux/store';
+
+export default function CardPanel() {   
+    const dispatch = useDispatch<AppDispatch>();
+    const favorites = useSelector((state: any) => state.favorites.favorites);  // ดึงรายการโปรดจาก Redux
+
+    const [venueResponse, setVenueResponse] = useState<VenueJson | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const venues = await getVenues();
+            setVenueResponse(venues);
+        };
+
+        fetchData();
+    }, []);
+
+    if (!venueResponse) return (
+        <p className="text-center text-xl font-semibold text-gray-700 py-6">
+            🔄 Hotel Panel is Loading...
+        </p>
+    );
+
+    // ฟังก์ชันสำหรับการเพิ่มหรือเอาโรงแรมออกจากรายการโปรด
+    const handleAddToFavorite = (venueName: string) => {
+        if (favorites.includes(venueName)) {
+            dispatch(removeFavorite(venueName));  // ถ้าเป็น Favorite แล้วให้ลบ
+        } else {
+            dispatch(addFavorite(venueName));  // ถ้ายังไม่เป็น Favorite ให้เพิ่ม
+        }
+    };
+
+    return (
+        <main className="max-w-6xl mx-auto p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {venueResponse.data.map((venueItem: VenueItem) => (
+                    <Link key={venueItem.id} href={`/venue/${venueItem.id}`} className="block">
+                        <Card 
+                            venueName={venueItem.name} 
+                            imgSrc={venueItem.picture} 
+                            onAddToFavorite={handleAddToFavorite}
+                            isFavorite={favorites.includes(venueItem.name)}  // เช็คว่าโรงแรมนี้เป็น Favorite หรือยัง
+                        />
+                    </Link>
+                ))}
+            </div>
+
+            {/* Hotel List With Favorites */}
+            <div className="mt-8 p-4 bg-gray-100 rounded-lg shadow-md">
+                <h2 className="text-2xl font-bold text-gray-800">
+                    My Favorite Hotels
+                </h2>
+                <div className="mt-2 space-y-2">
+                    {favorites.length > 0 ? (
+                        favorites.map((venueName: string) => (
+                            <div 
+                                key={venueName} 
+                                onClick={() => handleAddToFavorite(venueName)} 
+                                className="cursor-pointer text-lg text-gray-700 hover:text-red-500 transition duration-300"
+                            >
+                                🏨 {venueName}
+                            </div>
+                        ))
+                    ) : (
+                        <p>No favorites yet.</p>
+                    )}
+                </div>
+            </div>
+        </main>
+    );
 }
+
