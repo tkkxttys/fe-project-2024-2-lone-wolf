@@ -1,28 +1,26 @@
+// redux/features/favoritesSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// กำหนดประเภทของ state ของ favorites
 interface FavoritesState {
-    favorites: string[];  // สมมุติว่าเก็บรายการโปรดเป็น array ของ string
+    favorites: string[];  // กำหนดให้ favorites เป็นอาร์เรย์ของ string
 }
 
 const initialState: FavoritesState = {
-    favorites: [],
+    favorites: [],  // กำหนดค่าเริ่มต้นเป็นอาร์เรย์ว่าง
 };
 
-// สร้าง slice สำหรับ favorites
 const favoritesSlice = createSlice({
     name: 'favorites',
     initialState,
     reducers: {
-        addFavorite(state, action: PayloadAction<string>) {
-            state.favorites.push(action.payload);  // เพิ่มรายการโปรด
+        addFavorite: (state, action: PayloadAction<string>) => {
+            state.favorites.push(action.payload);
         },
-        removeFavorite(state, action: PayloadAction<string>) {
-            state.favorites = state.favorites.filter(item => item !== action.payload);  // ลบรายการโปรด
+        removeFavorite: (state, action: PayloadAction<string>) => {
+            state.favorites = state.favorites.filter(fav => fav !== action.payload);
         },
     },
 });
 
-// Export actions และ reducer ของ favorites
 export const { addFavorite, removeFavorite } = favoritesSlice.actions;
 export default favoritesSlice.reducer;

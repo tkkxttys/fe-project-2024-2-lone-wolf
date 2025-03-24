@@ -1,11 +1,14 @@
 'use client'
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFavorite } from '@/redux/features/favoriteSlice';
+import { RootState } from '@/redux/store';
 import Link from 'next/link';
 
 export default function MyFavorites() {
     const dispatch = useDispatch();
-    const favorites = useSelector((state: any) => state.favorites.favorites);
+
+    const favorites = useSelector((state: RootState) => state.favorites?.favorites || []);
+
 
     const handleRemoveFavorite = (venueName: string) => {
         dispatch(removeFavorite(venueName));
